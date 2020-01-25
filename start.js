@@ -5,9 +5,9 @@ const inquirer = require('inquirer');
 const qDepartment = [
   {
     type: "list",
-    name: "department",
-    message: "What department are you adding to?",
-    choices: ["Store Support", "Prepared Foods", "Bakery", "Grocery", "Produce", "Specialty"]
+    name: "pirates",
+    message: "What do you want to do?",
+    choices: ["Add Pirate crew", "Add Roles", "Add Crew Member", "View Pirate Crews", "View Roles", "Veiw All Members"]
   }
 ]
 
@@ -16,30 +16,30 @@ const  qRole = [
     type: "list",
     name: "role",
     message: "What role will filled?",
-    choices: ["Alternate Team Leader", "Supervisor", "Team Trainer", "Team Member"]
+    choices: ["Captain", "Crew Member"]
   },
   {
     type: "input",
-    name: "salary",
-    message: "What is the starting salary?"
+    name: "bounty",
+    message: "What is the recent bounty?"
   }
 ]
 
-const qEmployee = [
+const qCrew = [
   {
     type: "input",
     name: "fname",
-    message: "What is the employee first name?"
+    message: "What is the crew's first name?"
   },
   {
     type: "input",
     name: "lname",
-    message: "What is the employee last name?"
+    message: "What is the crew's last name?"
   },
   {
     type: "list",
-    name: "manager",
-    message: "Who will be the manager?",
+    name: "captain",
+    message: "Who will be theie Captain?",
     choices: []
   }
 ]
