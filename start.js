@@ -1,53 +1,88 @@
-const mysql = require('mysql');
-const consoleTable = require('console.table');
-const inquirer = require('inquirer');
-const figlet = require('figlet')
+const mysql = require("mysql");
+const consoleTable = require("console.table");
+const inquirer = require("inquirer");
+const figlet = require("figlet");
+const addQuestions = require("./lib/addQuestions");
+const viewQuestions = require("./lib/viewQuestions");
 
-const qDepartment = [
+const qGeneral = [
   {
     type: "list",
-    name: "pirates",
+    name: "general",
     message: "What do you want to do?",
-    choices: ["Add Pirate crew", "Add Roles", "Add Crew Member", "View Pirate Crews", "View Roles", "Veiw All Members"]
+    choices: [
+      "Add Pirate Crew",
+      "Add Roles",
+      "Add Crew Member",
+      "View Pirate Crews",
+      "View Roles",
+      "Veiw All Members",
+      "Quit"
+    ]
   }
-]
-
-const qCrew = [
-  {
-    type: "input",
-    name: "fname",
-    message: "What is the crew's first name?"
-  },
-  {
-    type: "input",
-    name: "lname",
-    message: "What is the crew's last name?"
-  },
-  {
-    type: "list",
-    name: "captain",
-    message: "Who will be theie Captain?",
-    choices: []
-  }
-]
+];
 
 const connection = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "liz2007",
-    database: "onepiece_db"
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "liz2007",
+  database: "onepiece_db"
+});
+
+connection.connect(function(err) {
+  if (err) throw err;
+  pretty();
+  start();
+});
+
+function pretty() {
+  console.clear();
+  figlet("One  Piece", function(err, data) {
+    if (err) {
+      console.dir(err);
+      return;
+    }
+    console.log(data);
   });
-  
-  connection.connect(function(err) {
-    if (err) throw err;
-    start();
-    figlet("ONE PIECE", )
+  figlet("Become  a  Pirate!", function(err, data) {
+    if (err) {
+      console.dir(err);
+      return;
+    }
+    console.log(data);
   });
+}
 
-  function start() {
-    console.clear();
+function start() {
+  inquirer.prompt(qGeneral).then(ans => {
+    switch (ans.general) {
+      case "Add Pirate Crew":
+        addPirateCrew();
+        break;
 
-  }
+      case "Add Roles":
+        addRoles();
+        break;
 
-  
+      case "Add Crew Member":
+        addCrewMember();
+        break;
+      case "View Pirate Crews":
+        viewPirateCrew();
+        break;
+
+      case "View Roles":
+        viewRoles();
+        break;
+
+      case "View All Members":
+        viewallMembers();
+        break;
+
+      case "Quit":
+        quit();
+        break;
+    }
+  });
+}
