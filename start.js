@@ -2,8 +2,6 @@ const mysql = require("mysql");
 const consoleTable = require("console.table");
 const inquirer = require("inquirer");
 const figlet = require("figlet");
-const addQuestions = require("./lib/addQuestions");
-const viewQuestions = require("./lib/viewQuestions");
 
 const qGeneral = [
   {
@@ -17,6 +15,7 @@ const qGeneral = [
       "View Pirate Crews",
       "View Roles",
       "Veiw All Members",
+      "Update Role",
       "Quit"
     ]
   }
@@ -37,7 +36,6 @@ connection.connect(function(err) {
 });
 
 function pretty() {
-  console.clear();
   figlet("One  Piece", function(err, data) {
     if (err) {
       console.dir(err);
@@ -80,9 +78,79 @@ function start() {
         viewallMembers();
         break;
 
+      case "Update Role":
+        updateRole();
+        break;
+
       case "Quit":
         quit();
         break;
     }
   });
 }
+
+function addPirateCrew() {
+  inquirer
+    .prompt({
+      type: "input",
+      name: "pirate_crew",
+      message: "What Pirate Crew will be added?"
+    })
+    .then(ans => {
+      const query = "INSERT INTO pirates SET ?";
+      connection.query(
+        query,
+        {
+          piratename: ans.pirate_crew
+        },
+        function(err, res) {
+          if (err) throw err;
+          start();
+        }
+      );
+    });
+}
+
+function addRoles() {
+  const query = "SELECT pirates.id, pirates.piratename FROM pirates";
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+
+    const pirateList = res.map(val => {
+      const pirates = {
+        piratename: val.piratename
+      };
+      return pirates;
+    });
+
+    inquirer
+      .prompt(
+        {
+          type: "input",
+          name: "roles",
+          message: "What role will be added?"
+        },
+        {
+          type: "input",
+          name: "bounty",
+          message: "How much is their bounty?"
+        },
+        {
+          type: "list",
+          name: "pirate_id",
+          message: "Which crew are they a part of?",
+          choices: pirateList
+        }
+      )
+      .then(ans => {
+        const query = `INSERT INTO roles(title, bounty, pirates_id) VALUES(${ans.roles}, "${ans.bounty}", (SELECT id FROM pirates WHERE piratename = "${ans.pirate_id}"));`
+        connection.query(query, function(err, res) {
+          if (err) throw err;
+          console.log(ans)
+          start();
+        });
+      });
+  });
+}
+
+
