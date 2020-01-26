@@ -24,12 +24,11 @@ CREATE TABLE crew (
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     roles_id INT NOT NULL,
-    captain_id INT,
+    captain_id INT NULL,
     PRIMARY KEY (id),
-    CONSTRAINT fk_roles FOREIGN KEY (roles_id) REFERENCES roles(id)
-    
+    CONSTRAINT fk_roles FOREIGN KEY (roles_id) REFERENCES roles(id),
+    CONSTRAINT fk_captain FOREIGN KEY (captain_id) REFERENCES crew(id)
 );
-ALTER TABLE crew ADD CONSTRAINT fk_captain FOREIGN KEY (captain_id) REFERENCES crew(id);
 
 INSERT INTO pirates (piratename)
 VALUES ('Straw Hats'), 
@@ -40,18 +39,18 @@ VALUES ('Straw Hats'),
        ('Beast');
 
 INSERT INTO roles (title, bounty, pirates_id)
-VALUES ('Captain, Straw Hats', 500000000, 1), 
-       ('Crew Member', 177000000, 1),
-       ('Captain, Blackbeard', 247600000, 2),
-       ('Crew Member', 20000000, 2),
-       ('Captain, Whitebeard', 546000000, 3), 
-       ('Crew Member', 550000000, 3),
-       ('Captain, Big Mom', 488000000, 4),
-       ('Crew Member', 700000000, 4),
-       ('Captain, Red Hair', 448900000, 5),
-       ('Crew Member', 700000000, 5),
-       ('Captain, Beast', 461100000, 6),
-       ('Crew Member', 320000000, 6);
+VALUES ('Straw Hats Captain', 500000000, 1), 
+       ('Straw Hats Crew Member', 177000000, 1),
+       ('Blackbeard Captain', 247600000, 2),
+       ('Blackbeard Crew Member', 20000000, 2),
+       ('Whitebeard Captain', 546000000, 3), 
+       ('WhiteBeard Crew Member', 550000000, 3),
+       ('Big Mom Captain', 488000000, 4),
+       ('Big Mom Crew Member', 700000000, 4),
+       ('Red Hair Captain', 448900000, 5),
+       ('Red Hair Crew Member', 700000000, 5),
+       ('Beast Captain', 461100000, 6),
+       ('Beast Crew Member', 320000000, 6);
 
 INSERT INTO crew (first_name, last_name, roles_id, captain_id)
 VALUES ('Luffy', 'Monkey', 1, NULL),

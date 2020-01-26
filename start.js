@@ -97,34 +97,27 @@ function addPirateCrew() {
       message: "What Pirate Crew will be added?"
     })
     .then(ans => {
-      const query = "INSERT INTO pirates SET ?";
-      connection.query(
-        query,
-        {
-          piratename: ans.pirate_crew
-        },
-        function(err, res) {
-          if (err) throw err;
-          start();
-        }
-      );
+      const query = `INSERT INTO pirates(piratename) VALUES(${ans.pirate_crew})`;
+      connection.query(query, function(err, res) {
+        if (err) throw err;
+        start();
+      });
     });
 }
 
 function addRoles() {
-  const query = "SELECT pirates.id, pirates.piratename FROM pirates";
+  const query = "SELECT pirates.piratename FROM pirates";
   connection.query(query, function(err, res) {
     if (err) throw err;
-
-    const pirateList = res.map(val => {
+    const pirateList = [];
+    res.map(val => {
       const pirates = {
-        piratename: val.piratename
+        name: val.piratename
       };
-      return pirates;
+      pirateList.push(pirates.name);
     });
-
     inquirer
-      .prompt(
+      .prompt([
         {
           type: "input",
           name: "roles",
@@ -141,16 +134,69 @@ function addRoles() {
           message: "Which crew are they a part of?",
           choices: pirateList
         }
-      )
+      ])
       .then(ans => {
-        const query = `INSERT INTO roles(title, bounty, pirates_id) VALUES(${ans.roles}, "${ans.bounty}", (SELECT id FROM pirates WHERE piratename = "${ans.pirate_id}"));`
+        const query = `INSERT INTO roles(title, bounty, pirates_id) 
+        VALUES("${ans.roles}", ${ans.bounty}, (SELECT id FROM pirates WHERE piratename = "${ans.pirate_id}"));`;
         connection.query(query, function(err, res) {
           if (err) throw err;
-          console.log(ans)
           start();
         });
       });
   });
 }
 
+function addCrewMember() {
+  const query = "SELECT  roles.title FROM roles";
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+    const rolesList = [];
+    res.map(val => {
+      const roles = {
+        name: val.title
+      };
+      rolesList.push(roles.name);
+    });
+    console.log(rolesList);
 
+    const query =
+      "SELECT first_name, last_name FROM crew WHERE captain_id IS NULL";
+    connection.query(query, function(err, res) {
+      if (err) throw err;
+
+      const capList = [];
+      res.map(val => {
+        const cap = {
+          name: val.first_name + " " + val.last_name
+        };
+        capList.push(cap.name);
+      });
+      console.log(capList);
+
+      // inquirer.prompt([
+      //   {
+      //     type: "input",
+      //     name: "fname",
+      //     message: "What is the crew's first name?"
+      //   },
+      //   {
+      //     type: "input",
+      //     name: "lname",
+      //     message: "What is the crew's last name?"
+      //   },
+      //   {
+      //     type: "list",
+      //     name: "role",
+      //     message: "What will their role be?",
+      //     choices: rolesList
+      //   },
+      //   {
+      //     type: "list",
+      //     name: "captain_id",
+      //     message: "Who will be their Captain?",
+      //     choices: capList
+      //   }
+      // ]);
+    });
+  });
+}
