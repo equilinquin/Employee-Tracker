@@ -32,11 +32,10 @@ const connection = mysql.createConnection({
 connection.connect(function(err) {
   if (err) throw err;
   pretty();
-  start();
+  // start();
 });
 
 function pretty() {
-  console.clear()
   figlet("One  Piece", function(err, data) {
     if (err) {
       console.dir(err);
@@ -51,10 +50,10 @@ function pretty() {
     }
     console.log(data);
   });
+  start();
 }
 
 function start() {
-  console.clear();
   inquirer.prompt(qGeneral).then(ans => {
     switch (ans.general) {
       case "Add Pirate Crew":
@@ -93,15 +92,18 @@ function start() {
 
 function addPirateCrew() {
   inquirer
-    .prompt({
+    .prompt(
+      {
       type: "input",
       name: "pirate_crew",
       message: "What Pirate Crew will be added?"
-    })
+    }
+    )
     .then(ans => {
       const query = `INSERT INTO pirates(piratename) VALUES(${ans.pirate_crew})`;
       connection.query(query, function(err, res) {
         if (err) throw err;
+        console.log("You added a Pirate Crew");
         start();
       });
     });
@@ -142,6 +144,7 @@ function addRoles() {
         VALUES("${ans.roles}", ${ans.bounty}, (SELECT id FROM pirates WHERE piratename = "${ans.pirate_id}"))`;
         connection.query(query, function(err, res) {
           if (err) throw err;
+          console.log("You added new role");
           start();
         });
       });
@@ -206,6 +209,7 @@ function addCrewMember() {
         VALUES ("${ans.fname}", "${ans.lname}"(${role}), (${captain}))`;
           connection.query(query, function(err, res) {
             if (err) throw err;
+            console.log("You added new Crew Member");
             start();
           });
         });
@@ -244,7 +248,6 @@ function updateRole() {
   const query = 'SELECT title FROM roles'
   connection.query(query, function(err, res) {
     if(err) throw err;
-    console.log(res);
     const rolesList = [];
     res.map(val => {
       const roles = {
@@ -262,7 +265,6 @@ function updateRole() {
           name: val.first_name + " " + val.last_name
         };
         nameList.push(names.name);
-        console.log(nameList);
       });
       inquirer.prompt([
         {
@@ -280,9 +282,17 @@ function updateRole() {
         }
       ])
       .then(ans => {
-        const query = "UPDATE crew SET role_id "
+        const query = `UPDATE crew SET roles_id = (SELECT id FROM roles WHERE title = "${ans.role}") WHERE first_name AND last_name = "${ans.name}"`
+        connection.query(query, function(err, res) {
+          if(err) throw err;
+          console.log("You have updated crew member")
+          start();
+        })
       })
-
     });
   });
 };
+
+function quit() {
+  connection.end();
+}
