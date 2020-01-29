@@ -10,7 +10,7 @@ This application uses Node.js, inquirer, and console table to chart and view lis
 
 1. Clone repo onto your computer and open it on VS code.
 
-2. Run `npm install` to gather all node_modules needed to run code.
+2. Run `npm install` on the VS terminal to gather all node_modules needed to run code.
 
 3. Run code by typing in `node start.js` or `node start`.
 
