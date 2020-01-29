@@ -282,7 +282,8 @@ function updateRole() {
         }
       ])
       .then(ans => {
-        const query = `UPDATE crew SET roles_id = (SELECT id FROM roles WHERE title = "${ans.role}") WHERE first_name AND last_name = "${ans.name}"`
+        const query = `UPDATE crew SET roles_id = (SELECT id FROM roles WHERE title = "${ans.role}") WHERE concat(first_name, " ", last_name) = "${ans.name}"`
+console.log(query);
         connection.query(query, function(err, res) {
           if(err) throw err;
           console.log("You have updated crew member")
