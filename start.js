@@ -171,7 +171,7 @@ function addCrewMember() {
       const capList = [];
       res.map(val => {
         const cap = {
-          name: val.first_name
+          name: val.first_name + " " + val.last_name
         };
         capList.push(cap.name);
       });
@@ -204,9 +204,9 @@ function addCrewMember() {
         ])
         .then(ans => {
           const role = `SELECT id FROM roles WHERE title = "${ans.role}"`;
-          const captain = `SELECT id FROM (SELECT * FROM (SELECT id FROM crew WHERE first_name = "${ans.captain_id}")AS X) AS X`;
+          const captain = `SELECT id FROM (SELECT * FROM (SELECT id FROM crew WHERE concat(first_name, " ", last_name) = "${ans.captain_id}")AS X) AS X`;
           const query = `INSERT INTO crew(first_name, last_name, roles_id, captain_id)
-        VALUES ("${ans.fname}", "${ans.lname}"(${role}), (${captain}))`;
+        VALUES ("${ans.fname}", "${ans.lname}",(${role}), (${captain}))`;
           connection.query(query, function(err, res) {
             if (err) throw err;
             console.log("You added new Crew Member");
@@ -283,7 +283,6 @@ function updateRole() {
       ])
       .then(ans => {
         const query = `UPDATE crew SET roles_id = (SELECT id FROM roles WHERE title = "${ans.role}") WHERE concat(first_name, " ", last_name) = "${ans.name}"`
-console.log(query);
         connection.query(query, function(err, res) {
           if(err) throw err;
           console.log("You have updated crew member")
